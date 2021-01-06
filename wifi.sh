@@ -1,5 +1,4 @@
 #! /usr/bin/env bash
-
 set -euo pipefail
 
 wpa_passphrase MGTS_GPON5_51EF pYq4RQmT > /etc/wpa_supplicant/wpa_supplicant-wlp5s0.conf
