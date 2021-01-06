@@ -142,7 +142,7 @@ sudo sed -i 's/#FONT="lat9w-16"/FONT=ter-132n/' /etc/rc.conf
 # cat <<-EOF | sudo tee /etc/X11/xorg.conf.d/20-amdgpu.conf
 # Section "Device"
 #   Identifier "AMD"
-#   Driver "modesetting"
+#   Driver "amdgpu"
 #   Option "TearFree" "true"
 #   EndSection
 # EOF
