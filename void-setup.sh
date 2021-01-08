@@ -15,7 +15,24 @@ sleep 20s
 sudo xbps-install -Syu && sudo xbps-install -Syu
 
 # Install necessary software
-sudo xbps-install -y bash-completion bind-utils bluez celluloid chrome-gnome-shell chrony curl dbus dejavu-fonts-ttf docker docker-compose elogind firefox flatpak git gnome google-fonts-ttf kitty mesa-dri mesa-vaapi mesa-vdpau mesa-vulkan-radeon neofetch nmap ntfs-3g socklog-void telegram-desktop terminus-font transmission-gtk unzip vim vulkan-loader wget xdg-user-dirs xtools
+sudo xbps-install -y bash-completion bind-utils bluez celluloid chrome-gnome-shell chrony curl dbus dejavu-fonts-ttf docker docker-compose elogind firefox flatpak git gnome google-fonts-ttf kitty mesa-dri mesa-vaapi mesa-vdpau mesa-vulkan-radeon neofetch nmap ntfs-3g qemu socklog-void telegram-desktop terminus-font transmission-gtk unzip vim virt-manager vulkan-loader wget xdg-user-dirs xtools
+
+# Add user to necessary groups
+sudo usermod -aG bluetooth,docker,socklog,libvirt $USER
+
+# Set time to localtime
+sudo sed -i 's/#HARDWARECLOCK="UTC"/HARDWARECLOCK=localtime/' /etc/rc.conf
+
+# Set console font to Terminus large
+sudo sed -i 's/#FONT="lat9w-16"/FONT=ter-132n/' /etc/rc.conf
+
+# Enable periodic TRIM
+cat <<-EOF | sudo tee /etc/cron.daily/fstrim
+#!/bin/sh
+
+fstrim /
+EOF
+sudo chmod u+x /etc/cron.daily/fstrim
 
 # Install Cascadia Code
 CascadiaCodeVersion="2009.22"
@@ -99,15 +116,6 @@ load-module module-remap-source source_name=input-1 source_properties="device.de
 load-module module-remap-source source_name=input-2 source_properties="device.description='Input 2'" master=alsa_input.usb-Focusrite_Scarlett_2i4_USB-00.analog-stereo remix=no channels=2 master_channel_map=front-right,front-right  channel_map=left,right
 EOF
 
-# Add user to necessary groups
-sudo usermod -aG bluetooth,docker,socklog $USER
-
-# Set time to localtime
-sudo sed -i 's/#HARDWARECLOCK="UTC"/HARDWARECLOCK=localtime/' /etc/rc.conf
-
-# Set console font to Terminus large
-sudo sed -i 's/#FONT="lat9w-16"/FONT=ter-132n/' /etc/rc.conf
-
 # Configure monitor for GNOME & GDM
 cat <<-EOF > ~/.config/monitors.xml
 <monitors version="2">
@@ -147,15 +155,6 @@ sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
 #   EndSection
 # EOF
 
-
-# Enable periodic TRIM
-cat <<-EOF | sudo tee /etc/cron.daily/fstrim
-#!/bin/sh
-
-fstrim /
-EOF
-sudo chmod u+x /etc/cron.daily/fstrim
-
 # Enable necessary services
 sudo rm -fv /var/service/dhcpcd
 sudo rm -fv /var/service/wpa_supplicant
@@ -166,6 +165,9 @@ sudo ln -sfv /etc/sv/nanoklogd /var/service/
 sudo ln -sfv /etc/sv/dbus /var/service/
 sudo ln -sfv /etc/sv/bluetoothd /var/service/
 sudo ln -sfv /etc/sv/docker /var/service/
+sudo ln -sfv /etc/sv/libvirtd /var/service/
+sudo ln -sfv /etc/sv/virtlockd /var/service/
+sudo ln -sfv /etc/sv/virtlogd /var/service/
 sudo ln -sfv /etc/sv/NetworkManager /var/service/
 sudo ln -sfv /etc/sv/gdm /var/service/
 
