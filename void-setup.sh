@@ -15,7 +15,18 @@ sleep 20s
 sudo xbps-install -Syu && sudo xbps-install -Syu
 
 # Install necessary software
-sudo xbps-install -y bash-completion bind-utils bluez celluloid chrome-gnome-shell chrony curl dbus dejavu-fonts-ttf docker docker-compose elogind firefox flatpak git gnome google-fonts-ttf kitty mesa-dri mesa-vaapi mesa-vdpau mesa-vulkan-radeon neofetch nmap ntfs-3g qemu socklog-void telegram-desktop terminus-font transmission-gtk unzip vim virt-manager vulkan-loader wget xdg-user-dirs xtools
+sudo xbps-install -y bash-completion bind-utils bluez chrome-gnome-shell chrony curl dbus dejavu-fonts-ttf docker docker-compose elogind firefox flatpak git gnome google-fonts-ttf kitty mesa-dri mesa-vaapi mesa-vdpau mesa-vulkan-radeon mpv neofetch nmap ntfs-3g python3-pip qemu socklog-void telegram-desktop terminus-font transmission-gtk unzip vim virt-manager vulkan-loader wget xdg-user-dirs xtools
+
+# Install Ansible
+sudo /usr/bin/pip install ansible
+
+# Install Terraform
+TFVersion="0.14.4"
+cd /tmp
+curl -LO https://releases.hashicorp.com/terraform/${TFVersion}/terraform_${TFVersion}_linux_amd64.zip
+unzip terraform_${TFVersion}_linux_amd64.zip
+sudo mv -fv terraform /usr/local/bin/
+rm -fv terraform_${TFVersion}_linux_amd64.zip
 
 # Add user to necessary groups
 sudo usermod -aG bluetooth,docker,socklog,libvirt $USER
@@ -34,6 +45,10 @@ fstrim /
 EOF
 sudo chmod u+x /etc/cron.daily/fstrim
 
+# Disable CPU mitigations
+sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="[^"]*/& mitigations=off/' /etc/default/grub
+sudo update-grub
+
 # Install Cascadia Code
 CascadiaCodeVersion="2009.22"
 cd /tmp
@@ -42,7 +57,7 @@ unzip CascadiaCode-${CascadiaCodeVersion}.zip -d cascadiacode
 mkdir -pv ~/.local/share/fonts
 cp -fv /tmp/cascadiacode/ttf/static/*.ttf ~/.local/share/fonts/
 rm -rfv /tmp/cascadiacode
-rm -rfv /tmp/CascadiaCode-${CascadiaCodeVersion}.zip
+rm -fv /tmp/CascadiaCode-${CascadiaCodeVersion}.zip
 
 # Configure fonts
 sudo ln -sfv /usr/share/fontconfig/conf.avail/10-hinting-slight.conf /etc/fonts/conf.d/
@@ -154,6 +169,23 @@ sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
 #   Option "TearFree" "true"
 #   EndSection
 # EOF
+
+# Add some aliases for XBPS
+cat <<-EOF >> ~/.bashrc
+alias upg='sudo xbps-install -Syu && sudo xbps-install -Syu'
+alias ins='sudo xbps-install -Su'
+alias rem='sudo xbps-remove -R'
+alias remo='sudo xbps-remove -Oo'
+alias pser='sudo xbps-query -Rs'
+EOF
+
+# Copy MPV configs
+mkdir -pv ~/.config/mpv
+cp -fv ./mpv/mpv.conf ~/.config/mpv/
+
+# Copy kitty configs
+mkdir -pv ~/.config/kitty
+cp -fv ./kitty/*.conf ~/.config/kitty/
 
 # Enable necessary services
 sudo rm -fv /var/service/dhcpcd
