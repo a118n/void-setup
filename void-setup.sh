@@ -18,7 +18,7 @@ sudo xbps-install -Syu && sudo xbps-install -Syu
 sudo xbps-install -y bash-completion bind-utils bluez chrome-gnome-shell chrony curl dbus dejavu-fonts-ttf docker docker-compose elogind firefox flatpak git gnome google-fonts-ttf kitty mesa-dri mesa-vaapi mesa-vdpau mesa-vulkan-radeon mpv neofetch nmap ntfs-3g python3-pip qemu socklog-void telegram-desktop terminus-font transmission-gtk unzip vim virt-manager vulkan-loader wget xdg-user-dirs xtools
 
 # Install Ansible
-sudo /usr/bin/pip install ansible
+/usr/bin/pip install --user ansible ansible-lint "molecule[docker,lint]"
 
 # Install Terraform
 TFVersion="0.14.4"
@@ -170,8 +170,9 @@ sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
 #   EndSection
 # EOF
 
-# Add some aliases for XBPS
+# Add some stuff to bash config
 cat <<-EOF >> ~/.bashrc
+export PATH="~/.local/bin:$PATH"
 alias upg='sudo xbps-install -Syu && sudo xbps-install -Syu'
 alias ins='sudo xbps-install -Su'
 alias rem='sudo xbps-remove -R'
