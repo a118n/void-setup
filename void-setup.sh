@@ -178,6 +178,7 @@ alias ins='sudo xbps-install -Su'
 alias rem='sudo xbps-remove -R'
 alias remo='sudo xbps-remove -Oo'
 alias pser='sudo xbps-query -Rs'
+alias pipu='pip list --user --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U --user'
 EOF
 
 # Copy MPV configs
