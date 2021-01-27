@@ -173,6 +173,7 @@ sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
 # Add some stuff to bash config
 cat <<-EOF >> ~/.bashrc
 export PATH="~/.local/bin:$PATH"
+export GPG_TTY=$(tty)
 alias upg='sudo xbps-install -Syu && sudo xbps-install -Syu'
 alias ins='sudo xbps-install -Su'
 alias rem='sudo xbps-remove -R'
