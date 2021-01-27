@@ -174,12 +174,15 @@ sudo chown gdm:gdm /var/lib/gdm/.config/monitors.xml
 cat <<-EOF >> ~/.bashrc
 export PATH="~/.local/bin:$PATH"
 export GPG_TTY=$(tty)
+
 alias upg='sudo xbps-install -Syu && sudo xbps-install -Syu'
 alias ins='sudo xbps-install -Su'
 alias rem='sudo xbps-remove -R'
 alias remo='sudo xbps-remove -Oo'
 alias pser='sudo xbps-query -Rs'
 alias pipu='pip list --user --outdated --format=freeze | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U --user'
+alias df='df -hT'
+alias du='du -d 1 -h | sort -h -r'
 EOF
 
 # Copy MPV configs
